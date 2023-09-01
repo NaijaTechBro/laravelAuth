@@ -2,6 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\PasswordResetTokensController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +20,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+// Public Routes
+Route::post('/register', [RegistrationController::class, 'register']);
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/forgotPassword', [PasswordResetTokensController::class, 'forgotPassword']);
+Route::post('/resetPassword/{token}', [PasswordResetTokensController::class, 'resetPassword']);
+
+Route::post('/sendVerificationEmail', [VerifyEmailController::class, 'sendEmailVerification']);
+Route::post('/verifyEmail/{token}', [VerifyEmailController::class, 'verifyAccount']);
+
+
+// Protected Routes
+Route::middleware(['auth:sanctum'])->group(function(){
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/loggeduser', [AuthController::class, 'logged_user']);
+    Route::post('/changepassword', [UserController::class, 'change_password']);
 });
